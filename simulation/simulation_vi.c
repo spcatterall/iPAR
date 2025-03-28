@@ -3,7 +3,7 @@
 
 // Assumes that the background infection rate depends ONLY on the eps parameters and the kernel parameter lambda
 // Assumes that Number_Eps is (at least) 6
-// NB To run on Linux, rename simulation e.g. input file as siminputsw.txt, then use tr -d '\r' <siminputsw.txt> siminputs.txt 
+// NB To run on Linux, rename simulation input file as e.g. siminputsw.txt, then use tr -d '\r' <siminputsw.txt> siminputs.txt 
 
 #include <stdio.h>
 #include <math.h>
@@ -22,7 +22,7 @@
 #define MNU 5000 // maximum number of units/cells in modelled landscape  
 #define DMAX 100 //this is the maximum distance over which secondary transmission can occur (excluding potential background infection) 
 #define NBMAX 5000 // max number of units in a neighbourhood (usually this should be bounded by (2*DMAX+1)^2)
-#define MNCOV 6 // max number of covariates
+#define MNCOV 6 // max number of covariates 
 #define MSI 100 // maximum number of time subintervals (for generating risk maps)
 #define NUMR 10 // maximum number of regions into which the study area is split for the 'risktemporal' output
 #define TIMEINDEXMAX 10000 // maximum number of iterations in a simulation
@@ -110,7 +110,7 @@ double kernel(int,int,double);
 double epscalcfull(int);
 double epscalcmini(int);
 int fabby(double);
-double evalf(double,double *);
+double evalf(double,double *); 
 void read_inputs(void);
 void readint(int *,char *,FILE *);
 
@@ -191,7 +191,7 @@ int main()
 	for(kk=0;kk<Number_Simp;kk++) fscanf(cfptr,"%lf",&unit[k].h[kk]);
 	for(kk=0;kk<Number_Eps;kk++) fscanf(cfptr,"%lf",&unit[k].ep[kk]);
 	for(kk=0;kk<Number_Exp;kk++) fscanf(cfptr,"%lf",&unit[k].k[kk]);
-	unit[k].eps=epscalc(k);
+	//printf("\nep=%f %f %f %f %f %f",unit[k].ep[0],unit[k].ep[1],unit[k].ep[2],unit[k].ep[3],unit[k].ep[4],unit[k].ep[5]);
   }
   fclose(cfptr);
 
@@ -240,6 +240,7 @@ int main()
 		  fscanf(fptr,"%lf",&dummy); // loglikelihood value
 		  for(k=0;k<Number_Simp-1;k++) fscanf(fptr,"%lf",&dummy);
 		  for(k=0;k<Number_Simp-1;k++) fscanf(fptr,"%lf",&dummy);
+		  //printf("\nrho=%f",rhot[i1*nsampf+j]);
 	  }
 	  fclose(fptr);
   }
@@ -260,6 +261,7 @@ int main()
 	  for(k2=0;k2<numtk;k2++)f[k2]=ft[sample][k2];
 	  for(k2=0;k2<Number_Exp;k2++)sigmap[k2]=sigmapt[sample][k2];
 	  for(k2=0;k2<Number_Exp;k2++)gamap[k2]=gamapt[sample][k2];
+	  //printf("\nrho=%f eps=%f sigma=%f %f %f %f %f %f lambda=%f",rho,eps[0],sigma[0],sigma[1],sigma[2],sigma[3],sigma[4],sigma[5],lambda);
 	  
 	  // Compute transmission kernel matrix
       b=0.0;
@@ -292,6 +294,7 @@ int main()
 		for(k=0;k<Number_Exp;k++) exponent+=gamap[k]*unit[i].k[k];
 		unit[i].infectivity*=exp(exponent);
 		unit[i].eps=epscalc(i);
+		//printf("\n eps=%f susc=%f inf=%f",unit[i].eps,unit[i].susceptibility,unit[i].infectivity);
 		
       }
       
@@ -364,7 +367,7 @@ int main()
 				  lis.time=1000000;
 	              for(i=0;i<numtk;i++)
 	              {
-		            if((tk[i]<lis.time)&&(tk[i]>timenow)) {lis.time=tk[i];lis.timeindex=i;}
+		            if((tk[i]<lis.time)&&(tk[i]>timenow)) {lis.time=tk[i];lis.timeindex=i;}   
 	              }
 			  }
 			  else // it's a rate-based event so determine which one and then implement it
